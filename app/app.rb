@@ -12,7 +12,7 @@ get '/' do
   appearance = {
     apiversion: "1",
     author: "",           # TODO: Your Battlesnake Username
-    color: "#5c9aa9",     # TODO: Personalize
+    color: "#43a9b2",     # TODO: Personalize
     head: "bendr",      # TODO: Personalize
     tail: "freckled",      # TODO: Personalize
   }
