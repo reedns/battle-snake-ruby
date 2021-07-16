@@ -7,12 +7,16 @@ def move(board)
   possible_moves = %i(up down left right).shuffle
   top_edge = board[:board][:height] - 1
   right_edge = board[:board][:width] - 1
+  head = board[:you][:head]
   body = board[:you][:body]
   snakes = board[:board][:snakes]
+  food = board[:board][:food]
+
+  possible_moves = possible_moves.prepend(food_directions(food, head)).uniq
 
   safe_move =
     possible_moves.detect do |move|
-      new_position = next_move(move, board[:you][:head])
+      new_position = next_move(move, head)
       # puts "|||||||||| after head: #{new_position}"
 
       !hits_a_wall?(move, top_edge, right_edge, new_position) &&
@@ -60,6 +64,36 @@ end
 
 def hits_snake?(snakes, new_position = {})
   snakes.detect do |snake|
-    new_position == snake
+    other_head = snake[:body].first
+    snake[:body].detect do |body|
+      body == new_position
+    end
   end
 end
+
+def food_directions(food, head)
+  min = nil
+  distance = 1000
+  closest = food.each do |f|
+     dist = (head[:x] - f[:x]).abs + (head[:y] - f[:y]).abs
+     if dist < distance
+       min = f
+       distance = dist
+     end
+  end
+
+  x = (head[:x] - min[:x]).positive? ? :left : :right
+  y = (head[:y] - min[:y]).positive? ? :down : :up
+
+  [x, y]
+end
+
+# {:game=>
+ # {:id=>"0849548c-b5da-4c04-b7f6-8e432c2349ef", :ruleset=>{:name=>"standard", :version=>"v1.0.17"}, :timeout=>500},
+ # :turn=>8,
+ # :board=>{:height=>11,
+          # :width=>11,
+          # :snakes=>[{:id=>"gs_kKHjJyvFCgHPkpjYMTdCpFpJ", :name=>"fierce garter snake", :latency=>"149", :health=>92, :body=>[{:x=>8, :y=>2}, {:x=>8, :y=>3}, {:x=>9, :y=>3}], :head=>{:x=>8, :y=>2}, :length=>3, :shout=>""}
+                    # , {:id=>"gs_6gMVhcFggxVPvhtbYtQxvy9F", :name=>"fierce garter snake", :latency=>"151", :health=>94, :body=>[{:x=>7, :y=>1}, {:x=>8, :y=>1}, {:x=>8, :y=>0}, {:x=>7, :y=>0}], :head=>{:x=>7, :y=>1}, :length=>4, :shout=>""}],
+         # :food=>[{:x=>8, :y=>4}, {:x=>5, :y=>5}], :hazards=>[]},
+ # :you=>{:id=>"gs_kKHjJyvFCgHPkpjYMTdCpFpJ", :name=>"fierce garter snake", :latency=>"149", :health=>92, :body=>[{:x=>8, :y=>2}, {:x=>8, :y=>3}, {:x=>9, :y=>3}], :head=>{:x=>8, :y=>2}, :length=>3, :shout=>""}}
