@@ -13,15 +13,16 @@ def move(board)
 
   safe_moves = []
 
-  possible_moves.each do |move|
-    new_position = next_move(move)
+  move =
+    possible_moves.each do |move|
+      new_position = next_move(move)
 
-    unless hits_a_wall?(move, top_edge, right_edge, new_position)
-      save_moves << move
+      unless hits_a_wall?(move, top_edge, right_edge, new_position)
+        return move
+      end
     end
-  end
 
-  { "move": safe_moves.first }
+  { "move": move }
 end
 
 def next_move(move, head_coords)
