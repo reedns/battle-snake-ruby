@@ -38,6 +38,7 @@ post '/move' do
   # Implement move logic in app/move.rb
   response = move(request)
   content_type :json
+  puts "########### response: #{response}"
   camelcase(response).to_json
 end
 
