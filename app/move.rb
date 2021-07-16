@@ -1,6 +1,3 @@
-# This function is called on every turn of a game. It's how your Battlesnake decides where to move.
-# Valid moves are "up", "down", "left", or "right".
-# TODO: Use the information in board to decide your next move.
 def move(board)
   puts board
 
@@ -82,10 +79,15 @@ def food_directions(food, head)
      end
   end
 
-  x = (head[:x] - min[:x]).positive? ? :left : :right
-  y = (head[:y] - min[:y]).positive? ? :down : :up
+  x_dist = head[:x] - min[:x]
+  y_dist = head[:y] - min[:y]
+  x = (x_dist).positive? ? :left : :right
+  y = (y_dist).positive? ? :down : :up
 
-  [x, y]
+  x_min = (x_dist).abs
+  y_min = (y_dist).abs
+
+  x_min > y_min ? [x, y] : [y, x]
 end
 
 # {:game=>
