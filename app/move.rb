@@ -21,7 +21,7 @@ def move(board)
     end
   end
 
-  { "move": move.first }
+  { "move": safe_moves.first }
 end
 
 def next_move(move, head_coords)
