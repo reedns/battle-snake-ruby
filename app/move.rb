@@ -87,7 +87,7 @@ def food_directions(food, head)
   x_min = (x_dist).abs
   y_min = (y_dist).abs
 
-  x_min > y_min ? [x, y] : [y, x]
+  x_min < y_min ? [x, y] : [y, x]
 end
 
 # {:game=>
