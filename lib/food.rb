@@ -7,14 +7,14 @@ class Food
   end
 
   def y_distance
-    (head[:y] - coords[:y]).abs
+    head[:y] - coords[:y]
   end
 
   def x_distance
-    (head[:x] - coords[:x]).abs
+    head[:x] - coords[:x]
   end
 
   def manhattan_distance
-    y_distance + x_distance
+    y_distance.abs + x_distance.abs
   end
 end

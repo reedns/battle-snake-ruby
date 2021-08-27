@@ -7,28 +7,40 @@ class Game
 
   def initialize(game_data)
     @board = Board.new(game_data)
-    puts "board #{board}"
 
     me = Snake.new(game_data[:you])
     @head = me.head
     @body = me.body
     @snakes = board.board[:snakes].map { |coords| Snake.new(coords) }
-    @food = board.board[:food].map { |coords| Food.new(coords, food) }
+    @food = board.board[:food].map { |coords| Food.new(coords, head) }
     @moves = %i(up down left right).shuffle
   end
 
+  def good_move?(move, new_position)
+    safe = safe?(new_position)
+
+    food?(new_position) ||
+    (towards_food?(move) && safe) ||
+    safe
+  end
+
+  def safe?(new_position)
+    !hits_a_wall?(new_position) &&
+    !hits_itself?(new_position) &&
+    !hits_snake?(new_position)
+  end
+
   def move
-    safe_move =
+    good_move =
       moves.detect do |move|
         new_position = next_move(move)
-
-        food?(new_position) ||
-        !hits_a_wall?(new_position) &&
-        !hits_itself?(new_position) &&
-        !hits_snake?(new_position)
+        good_move?(move, new_position)
       end
 
-    { "move": safe_move }
+    puts "board #{board.board}"
+    puts "head: #{head}"
+
+    { "move": good_move }
   end
 
   def good_move(safe_moves)
@@ -54,7 +66,7 @@ class Game
     x = new_position[:x]
     puts "new positions: #{x}, #{y}"
 
-    y >= board.top || y <= board.bottom || x <= board.left_edge || x >= board.right_edge
+    y > board.top || y < board.bottom || x < board.left_edge || x > board.right_edge
   end
 
   def hits_snake?(new_position)
@@ -75,7 +87,15 @@ class Game
     food.detect { |f| f.coords == new_position }
   end
 
-  def food_directions(move)
+  def towards_food?(move)
+    return true if food.empty?
+
     closest = food.max { |f| f.manhattan_distance }
+    puts "Closest: #{closest}"
+
+    move == :up && closest.y_distance.positive? ||
+    move == :down && closest.y_distance.negative? ||
+    move == :right && closest.x_distance.positive? ||
+    move == :left && closest.x_distance.negative?
   end
 end
