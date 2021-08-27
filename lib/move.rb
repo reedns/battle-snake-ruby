@@ -8,8 +8,8 @@ class Move
     @score = 0
   end
 
-  def next_move
-    next_head = head.dup
+  def next_move(start_head = head)
+    next_head = start_head.dup
     case dir
     when :up then next_head[:y] += 1
     when :down then next_head[:y] -= 1

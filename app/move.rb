@@ -98,7 +98,11 @@ end
  # :turn=>8,
  # :board=>{:height=>11,
           # :width=>11,
-          # :snakes=>[{:id=>"gs_kKHjJyvFCgHPkpjYMTdCpFpJ", :name=>"fierce garter snake", :latency=>"149", :health=>92, :body=>[{:x=>8, :y=>2}, {:x=>8, :y=>3}, {:x=>9, :y=>3}], :head=>{:x=>8, :y=>2}, :length=>3, :shout=>""}
+          # :snakes=>[{:id=>"gs_kKHjJyvFCgHPkpjYMTdCpFpJ",
+#                      :name=>"fierce garter snake",
+#                      :latency=>"149",
+#                      :health=>92,
+#                      :body=>[{:x=>8, :y=>2}, {:x=>8, :y=>3}, {:x=>9, :y=>3}], :head=>{:x=>8, :y=>2}, :length=>3, :shout=>""}
                     # , {:id=>"gs_6gMVhcFggxVPvhtbYtQxvy9F", :name=>"fierce garter snake", :latency=>"151", :health=>94, :body=>[{:x=>7, :y=>1}, {:x=>8, :y=>1}, {:x=>8, :y=>0}, {:x=>7, :y=>0}], :head=>{:x=>7, :y=>1}, :length=>4, :shout=>""}],
          # :food=>[{:x=>8, :y=>4}, {:x=>5, :y=>5}], :hazards=>[]},
  # :you=>{:id=>"gs_kKHjJyvFCgHPkpjYMTdCpFpJ", :name=>"fierce garter snake", :latency=>"149", :health=>92, :body=>[{:x=>8, :y=>2}, {:x=>8, :y=>3}, {:x=>9, :y=>3}], :head=>{:x=>8, :y=>2}, :length=>3, :shout=>""}}

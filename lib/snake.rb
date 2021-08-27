@@ -1,8 +1,9 @@
 class Snake
   attr_accessor :head, :body
 
-  def initialize(coords)
-    @head = coords[:head]
-    @body = coords[:body]
+  def initialize(data)
+    @head = data[:head]
+    @body = data[:body]
+    @length = data[:length]
   end
 end
