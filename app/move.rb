@@ -1,22 +1,28 @@
-def move(board)
-  puts board
+require_relative 'lib/snake'
+require_relative 'lib/board'
+
+def move(game_data)
+  puts game_data
+
+  board_instance = Board.new(game_data)
+  board = board_instance.board
+  puts "board #{board}"
 
   possible_moves = %i(up down left right).shuffle
-  top_edge = board[:board][:height] - 1
-  right_edge = board[:board][:width] - 1
-  head = board[:you][:head]
-  body = board[:you][:body]
-  snakes = board[:board][:snakes]
-  food = board[:board][:food]
+
+  me = Snake.new(game_data[:you])
+  head = me.head
+  body = me.body
+  snakes = board[:snakes].map { |coords| Snake.new(coords) }
+  food = board[:food].map { |coords| Food.new(coords, head) }
 
   possible_moves = possible_moves.prepend(food_directions(food, head)).uniq
 
   safe_move =
     possible_moves.detect do |move|
       new_position = next_move(move, head)
-      # puts "|||||||||| after head: #{new_position}"
 
-      !hits_a_wall?(move, top_edge, right_edge, new_position) &&
+      !hits_a_wall?(move, board_instance, new_position) &&
       !hits_itself?(body, new_position) &&
       !hits_snake?(snakes, new_position)
     end
@@ -26,8 +32,6 @@ end
 
 def next_move(move, head)
   next_head = head.dup
-  # puts "|||||||||| move: #{move}"
-  # puts "|||||||||| before head: #{head}"
   case move
   when :up then next_head[:y] += 1
   when :down then next_head[:y] -= 1
@@ -35,21 +39,21 @@ def next_move(move, head)
   when :right then next_head[:x] += 1
   end
 
+  puts "Prev head: #{head}"
+  puts "Next head: #{next_head}"
   next_head
 end
 
-def hits_a_wall?(move, top_edge, right_edge, new_position = {})
+def hits_a_wall?(move, board, new_position = {})
   y = new_position[:y]
   x = new_position[:x]
+  puts "new positions: #{x}, #{y}"
+  puts "board: #{board}"
 
-  # puts "########## #{move}"
-  # puts "########## y = #{y} top = #{top_edge + 1}"
-  # puts "########## x = #{x} right = #{right_edge + 1}"
-
-  move == :up && y == top_edge + 1 ||
-    move == :down && y == -1 ||
-    move == :left && x == -1 ||
-    move == :right && x == right_edge + 1
+  (move == :up && y > board.top) ||
+    (move == :down && y < board.bottom) ||
+    (move == :left && x < board.left_edge) ||
+    (move == :right && x > board.right_edge)
 end
 
 def hits_itself?(body, new_position = {})
@@ -61,8 +65,7 @@ end
 
 def hits_snake?(snakes, new_position = {})
   snakes.detect do |snake|
-    other_head = snake[:body].first
-    snake[:body].detect do |body|
+    snake.body.detect do |body|
       body == new_position
     end
   end

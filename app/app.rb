@@ -2,7 +2,7 @@ require 'rack'
 require 'rack/contrib'
 require 'sinatra'
 require './app/util'
-require './app/move'
+require './lib/game'
 
 use Rack::PostBodyContentTypeParser
 # This function is called when you register your Battlesnake on play.battlesnake.com
@@ -36,7 +36,7 @@ post '/move' do
   request = underscore(env['rack.request.form_hash'])
 
   # Implement move logic in app/move.rb
-  response = move(request)
+  response = Game.new(request).move
   content_type :json
   puts "########### response: #{response}"
   camelcase(response).to_json
