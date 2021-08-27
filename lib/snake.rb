@@ -5,6 +5,6 @@ class Snake
     @head = data[:head]
     @body = data[:body]
     @length = data[:length]
-    @health = data[:length]
+    @health = data[:health]
   end
 end

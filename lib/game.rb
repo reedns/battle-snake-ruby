@@ -33,7 +33,7 @@ class Game
       new_pos2 = move.next_move(new_position)
 
       if unsafe?(new_position)
-        move.score += -2
+        move.score += -2.0
         next
       end
 
@@ -59,10 +59,6 @@ class Game
 
     good_move = moves.sort_by { |m| -m.score }.first
 
-    puts "board #{board.board}"
-    puts "head: #{head}"
-    puts "move: #{good_move.score} #{good_move.dir}"
-
     { "move": good_move.dir }
   end
 
@@ -79,7 +75,6 @@ class Game
   def hits_a_wall?(position)
     y = position[:y]
     x = position[:x]
-    puts "new positions: #{x}, #{y}"
 
     y > board.top || y < board.bottom || x < board.left_edge || x > board.right_edge
   end
