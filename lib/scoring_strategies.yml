@@ -4,19 +4,19 @@ basic:
   food_2: 0.3
   towards_food_2: 0.2
   small_snakes: 0.5
-  possible_trap: -0.5
+  possible_trap: -0.8
 find_food:
   food: 1
   towards_food_1: 0.8
   food_2: 1
   towards_food_2: 0.8
   small_snakes: 0.1
-  possible_trap: -0.5
+  possible_trap: -0.8
 aggressive:
   food: 0.2
   towards_food_1: 0.2
   food_2: 0.1
   towards_food_2: 0.1
   small_snakes: 1
-  possible_trap: -0.5
+  possible_trap: -0.8
 
