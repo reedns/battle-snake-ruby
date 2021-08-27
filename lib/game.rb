@@ -89,11 +89,13 @@ class Game
     return false if food.empty?
 
     closest = food.max { |f| f.manhattan_distance(head) }
-    puts "Closest food: #{closest.coords}"
 
-    move == :up && closest.y_distance(head).negative? ||
-    move == :down && closest.y_distance(head).positive? ||
-    move == :right && closest.x_distance(head).negative? ||
-    move == :left && closest.x_distance(head).positive?
+    closest_y = closest.y_distance(new_position)
+    closest_x = closest.x_distance(new_position)
+
+    move == :up && closest_y.negative? && closest_y.abs < closest_x.abs ||
+    move == :down && closest_y.positive? && closest_y.abs < closest_x.abs ||
+    move == :right && closest_x.negative? && closest_y.abs > closest_x.abs||
+    move == :left && closest_x.positive? && closest_y.abs > closest_x.abs
   end
 end
