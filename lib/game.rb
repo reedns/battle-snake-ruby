@@ -33,7 +33,7 @@ class Game
       new_pos2 = move.next_move(new_position)
 
       if unsafe?(new_position)
-        move.score += -1.0
+        move.score += -2
         next
       end
 
@@ -45,6 +45,8 @@ class Game
         else
           SCORING_STRATEGIES['basic']
         end
+
+      puts "Strategy: #{strategy}"
 
       move.score += strategy['food'] if food?(new_position)
       move.score += strategy['towards_food_1'] if towards_food?(move.dir, new_position)
