@@ -39,7 +39,7 @@ class Game
       move.score += 0.3 if food?(new_pos2)
       move.score += 0.2 if towards_food?(move.dir, new_pos2)
       move.score += 0.5 if smaller_snake_heads?(new_pos2)
-      move.score -= 0.5 if other_snake_body?(new_pos2)
+      move.score -= 0.5 if other_snake_body?(new_pos2) || hits_itself?(new_pos2)
     end
 
     good_move = moves.sort_by { |m| -m.score }.first
