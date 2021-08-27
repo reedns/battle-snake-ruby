@@ -81,8 +81,8 @@ class Game
 
   def hits_snake?(position)
     snakes.detect do |snake|
-      snake.body.detect do |body|
-        body[0..-2] == position
+      snake.body[0..-2].detect do |section|
+        section == position
       end
     end
   end

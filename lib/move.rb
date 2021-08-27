@@ -17,8 +17,6 @@ class Move
     when :right then next_head[:x] += 1
     end
 
-    puts "Prev head: #{head}"
-    puts "Next head: #{next_head}"
     next_head
   end
 end
