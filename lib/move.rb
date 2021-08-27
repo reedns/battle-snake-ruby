@@ -5,7 +5,7 @@ class Move
   def initialize(dir, head)
     @dir = dir
     @head = head
-    @score = 0
+    @score = 0.0
   end
 
   def next_move(start_head = head)

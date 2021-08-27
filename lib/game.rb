@@ -29,16 +29,17 @@ class Game
       new_pos2 = move.next_move(new_position)
 
       if unsafe?(new_position)
-        move.score += -1
+        move.score += -1.0
         next
       end
 
-      move.score += 3 if food?(new_position)
-      move.score += 1 if towards_food?(move.dir, new_position)
+      move.score += 0.5 if food?(new_position)
+      move.score += 0.2 if towards_food?(move.dir, new_position)
 
-      move.score += 2 if food?(new_pos2)
-      move.score += 1 if towards_food?(move.dir, new_pos2)
-      move.score += 6 if smaller_snake_heads?(new_pos2)
+      move.score += 0.3 if food?(new_pos2)
+      move.score += 0.2 if towards_food?(move.dir, new_pos2)
+      move.score += 0.5 if smaller_snake_heads?(new_pos2)
+      move.score -= 0.5 if other_snake_body?(new_pos2)
     end
 
     good_move = moves.sort_by { |m| -m.score }.first
@@ -50,8 +51,12 @@ class Game
     { "move": good_move.dir }
   end
 
+  def other_snake_body?(position)
+    snakes.detect { |s| s.body[1..-1] == position }
+  end
+
   def smaller_snake_heads?(position)
-    nearby_heads = snakes.select { |s| s.body.first == position && s.length < me.length }
+    snakes.detect { |s| s.body.first == position && s.length < me.length }
   end
 
   def hits_a_wall?(new_position)
