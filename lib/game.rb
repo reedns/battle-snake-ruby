@@ -3,6 +3,7 @@ require_relative 'snake'
 require_relative 'board'
 require_relative 'food'
 require_relative 'move'
+require_relative 'util/distance_calculator'
 
 class Game
   attr_reader :head, :body, :snakes, :food, :moves, :board, :me, :other_snake_sizes
@@ -50,10 +51,12 @@ class Game
 
       move.score += strategy['food'] if food?(new_position)
       move.score += strategy['towards_food_1'] if towards_food?(move.dir, new_position)
+      move.score += strategy['find_small_snakes_1'] if towards_smaller_snakes?(move.dir, new_position)
 
       move.score += strategy['food_2'] if food?(new_pos2)
       move.score += strategy['towards_food_2'] if towards_food?(move.dir, new_pos2)
       move.score += strategy['small_snakes'] if smaller_snake_heads?(new_pos2)
+      move.score += strategy['find_small_snakes_2'] if towards_smaller_snakes?(move.dir, new_pos2)
       move.score -= strategy['possible_trap'] if other_snake_body?(new_pos2) || hits_itself?(new_pos2)
     end
 
@@ -100,10 +103,11 @@ class Game
   def towards_food?(move, position)
     return false if food.empty?
 
-    closest = food.max { |f| f.manhattan_distance(head) }
+    closest = food.max { |f| Util::DistanceCalculator.new(position, f.coords).manhattan_distance }
 
-    closest_y = closest.y_distance(position)
-    closest_x = closest.x_distance(position)
+    calculator = Util::DistanceCalculator.new(position, closest.coords)
+    closest_y = calculator.y_distance
+    closest_x = calculator.x_distance
 
     move == :up && closest_y.negative? && closest_y.abs < closest_x.abs ||
     move == :down && closest_y.positive? && closest_y.abs < closest_x.abs ||
@@ -113,5 +117,20 @@ class Game
 
   def biggest_snake?
     me.length > other_snake_sizes.max
+  end
+
+  def towards_smaller_snakes?(move, position)
+    return false if snakes.empty?
+
+    closest = snakes.max { |s| Util::DistanceCalculator.new(position, s.body.first).manhattan_distance }
+
+    calculator = Util::DistanceCalculator.new(position, closest.body.first)
+    closest_y = calculator.y_distance
+    closest_x = calculator.x_distance
+
+    move == :up && closest_y.negative? && closest_y.abs < closest_x.abs ||
+    move == :down && closest_y.positive? && closest_y.abs < closest_x.abs ||
+    move == :right && closest_x.negative? && closest_y.abs > closest_x.abs||
+    move == :left && closest_x.positive? && closest_y.abs > closest_x.abs
   end
 end
