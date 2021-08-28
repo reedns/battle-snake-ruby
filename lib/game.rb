@@ -16,16 +16,10 @@ class Game
     @me = Snake.new(game_data[:you])
     @head = me.head
     @body = me.body
-    @snakes = board.board[:snakes].map { |coords| Snake.new(coords) }
+    @snakes = board.board[:snakes][1..-1]&.map { |coords| Snake.new(coords) } || []
     @food = board.board[:food].map { |coords| Food.new(coords) }
     @moves = %i(up down left right).map { |dir| Move.new(dir, head) }
-    @other_snake_sizes = snakes.map { |s| s.length }
-  end
-
-  def unsafe?(new_position)
-    hits_a_wall?(new_position) ||
-    hits_itself?(new_position) ||
-    hits_snake?(new_position)
+    @other_snake_sizes = snakes[1..-1]&.map { |s| s.length } || []
   end
 
   def move
@@ -34,30 +28,33 @@ class Game
       new_pos2 = move.next_move(new_position)
 
       if unsafe?(new_position)
-        move.score += -2.0
+        move.score += -1.0
         next
       end
 
       strategy =
-        if biggest_snake? && me.health > 50
+        if biggest_snake? && me.health.to_i > 50
           SCORING_STRATEGIES['aggressive']
-        elsif me.health < 40 || !biggest_snake?
+        elsif me.health.to_i < 40 || !biggest_snake?
           SCORING_STRATEGIES['find_food']
         else
           SCORING_STRATEGIES['basic']
         end
 
       puts "Strategy: #{strategy}"
+      puts "Health: #{me.health}"
+      puts "Biggest: #{biggest_snake?}"
 
       move.score += strategy['food'] if food?(new_position)
-      move.score += strategy['towards_food_1'] if towards_food?(move.dir, new_position)
-      move.score += strategy['find_small_snakes_1'] if towards_smaller_snakes?(move.dir, new_position)
+      move.score += strategy['space'] if !food?(new_position)
+      move.score += strategy['find_small_snakes_1'] if moves_towards_objects?(move.dir, new_position, snakes)
 
       move.score += strategy['food_2'] if food?(new_pos2)
-      move.score += strategy['towards_food_2'] if towards_food?(move.dir, new_pos2)
+      move.score += strategy['space'] if !food?(new_pos2)
+      move.score += strategy['towards_food_2'] if moves_towards_objects?(move.dir, new_pos2, food)
       move.score += strategy['small_snakes'] if smaller_snake_heads?(new_pos2)
-      move.score += strategy['find_small_snakes_2'] if towards_smaller_snakes?(move.dir, new_pos2)
-      move.score -= strategy['possible_trap'] if other_snake_body?(new_pos2) || hits_itself?(new_pos2)
+      move.score += strategy['find_small_snakes_2'] if moves_towards_objects?(move.dir, new_pos2, snakes)
+      move.score += strategy['possible_trap'] if other_snake_body?(new_pos2) || hits_itself?(new_pos2)
     end
 
     good_move = moves.sort_by { |m| -m.score }.first
@@ -67,11 +64,21 @@ class Game
 
   private
 
+  def unsafe?(new_position)
+    hits_a_wall?(new_position) ||
+    hits_itself?(new_position) ||
+    hits_snake?(new_position)
+  end
+
   def other_snake_body?(position)
+    return false if snakes.empty?
+
     snakes.detect { |s| s.body[1..-1] == position }
   end
 
   def smaller_snake_heads?(position)
+    return false if snakes.empty?
+
     snakes.detect { |s| s.body.first == position && s.length < me.length }
   end
 
@@ -83,6 +90,8 @@ class Game
   end
 
   def hits_snake?(position)
+    return false if snakes.empty?
+
     snakes.detect do |snake|
       snake.body[0..-2].detect do |section|
         section == position
@@ -100,31 +109,18 @@ class Game
     food.detect { |f| f.coords == position }
   end
 
-  def towards_food?(move, position)
-    return false if food.empty?
-
-    closest = food.max { |f| Util::DistanceCalculator.new(position, f.coords).manhattan_distance }
-
-    calculator = Util::DistanceCalculator.new(position, closest.coords)
-    closest_y = calculator.y_distance
-    closest_x = calculator.x_distance
-
-    move == :up && closest_y.negative? && closest_y.abs < closest_x.abs ||
-    move == :down && closest_y.positive? && closest_y.abs < closest_x.abs ||
-    move == :right && closest_x.negative? && closest_y.abs > closest_x.abs||
-    move == :left && closest_x.positive? && closest_y.abs > closest_x.abs
-  end
-
   def biggest_snake?
+    return true if other_snake_sizes.empty?
+
     me.length > other_snake_sizes.max
   end
 
-  def towards_smaller_snakes?(move, position)
-    return false if snakes.empty?
+  def moves_towards_objects?(move, position, objects = nil)
+    return false if objects.empty?
 
-    closest = snakes.max { |s| Util::DistanceCalculator.new(position, s.body.first).manhattan_distance }
+    closest = objects.max { |o| Util::DistanceCalculator.new(position, o.coords).manhattan_distance }
 
-    calculator = Util::DistanceCalculator.new(position, closest.body.first)
+    calculator = Util::DistanceCalculator.new(position, closest.coords)
     closest_y = calculator.y_distance
     closest_x = calculator.x_distance
 

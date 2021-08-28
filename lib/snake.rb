@@ -7,4 +7,8 @@ class Snake
     @length = data[:length]
     @health = data[:health]
   end
+
+  def coords
+    body.first
+  end
 end

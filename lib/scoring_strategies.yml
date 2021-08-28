@@ -1,28 +1,28 @@
 basic:
   food: 0.5
-  towards_food_1: 0.2
   food_2: 0.3
   towards_food_2: 0.2
   small_snakes: 0.5
   find_small_snakes_1: 0.2
   find_small_snakes_2: 0.1
   possible_trap: -0.8
+  space: 0.5
 find_food:
   food: 1
-  towards_food_1: 0.8
   food_2: 1
-  towards_food_2: 0.8
+  towards_food_2: 0.7
   small_snakes: 0.1
   find_small_snakes_1: 0
   find_small_snakes_2: 0
   possible_trap: -0.8
+  space: 0.3
 aggressive:
   food: 0.1
-  towards_food_1: 0
   food_2: 0.1
   towards_food_2: 0
   small_snakes: 0.7
   find_small_snakes_1: 0.5
   find_small_snakes_2: 0.5
   possible_trap: -0.8
+  space: 0.3
 
